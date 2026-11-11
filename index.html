@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ODA: Estructura de la Materia y Enlaces Químicos</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border: #e2e8f0;
+            --font-size: 16px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        [data-theme="dark"] {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #059669;
+            --accent: #d97706;
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-size: var(--font-size);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .top-bar {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .controls-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .btn-icon {
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-icon:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--secondary);
+            width: 20%;
+            transition: width 0.3s ease;
+        }
+
+        header {
+            text-align: center;
+            padding: 2.5rem 1rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.05rem;
+        }
+
+        .banner-objective {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1.2rem auto 0;
+            max-width: 850px;
+            text-align: left;
+            backdrop-filter: blur(4px);
+        }
+
+        .banner-objective h3 {
+            color: #fef08a;
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .banner-objective p {
+            font-size: 0.98rem;
+            line-height: 1.5;
+            color: #ffffff;
+        }
+
+        nav.tabs {
+            display: flex;
+            justify-content: center;
+            background: var(--bg-card);
+            border-bottom: 2px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 1rem 1.2rem;
+            border: none;
+            background: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        main {
+            max-width: 1050px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .card h2, .card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .atom-container {
+            position: relative;
+            max-width: 420px;
+            margin: 1.5rem auto;
+            text-align: center;
+        }
+
+        .hotspot {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(0.95); }
+        }
+
+        .hotspot-info {
+            background: var(--bg-body);
+            border: 1px solid var(--primary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .flip-card {
+            background-color: transparent;
+            height: 170px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card:hover .flip-card-inner, .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .flip-card-front {
+            background-color: var(--primary);
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .flip-card-back {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            transform: rotateY(180deg);
+            border-color: var(--primary);
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 0.8rem 1rem;
+            margin: 0.5rem 0;
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .feedback {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 0.8rem;
+            display: none;
+            font-weight: 500;
+        }
+
+        .feedback.correct {
+            background: rgba(16, 185, 129, 0.15);
+            color: #065f46;
+            border: 1px solid var(--secondary);
+        }
+
+        .feedback.incorrect {
+            background: rgba(239, 68, 68, 0.15);
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .badge-container {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .badge {
+            background: var(--bg-body);
+            border: 2px dashed var(--border);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            width: 150px;
+            opacity: 0.4;
+            transition: all 0.3s;
+        }
+
+        .badge.unlocked {
+            opacity: 1;
+            border-style: solid;
+            border-color: var(--accent);
+            background: rgba(245, 158, 11, 0.12);
+        }
+
+        .badge-icon {
+            font-size: 2.2rem;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .resource-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+            margin: 0.3rem 0;
+        }
+
+        .resource-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .resource-btn.secondary-btn {
+            background: var(--secondary);
+        }
+
+        .resource-btn.secondary-btn:hover {
+            background: #059669;
+        }
+
+        .qr-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            background: var(--bg-body);
+        }
+
+        .qr-card img {
+            max-width: 130px;
+            height: auto;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            border: 1px solid var(--border);
+        }
+
+        .moeller-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .moeller-table th, .moeller-table td {
+            border: 1px solid var(--border);
+            padding: 0.6rem;
+            text-align: center;
+        }
+
+        .moeller-table th {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sim-list-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-body);
+            margin-bottom: 0.8rem;
+            transition: border-color 0.2s;
+        }
+
+        .sim-list-item:hover {
+            border-color: var(--primary);
+        }
+
+        .sim-icon {
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+
+        .sim-details {
+            flex: 1;
+        }
+
+        .sim-details h4 {
+            color: var(--primary);
+            margin-bottom: 0.2rem;
+            font-size: 1.05rem;
+        }
+
+        .sim-details p {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.5rem; }
+            .tab-btn { padding: 0.8rem 0.8rem; font-size: 0.85rem; }
+            .card { padding: 1rem; }
+            .sim-list-item { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <span style="font-weight: bold; color: var(--primary);">Ciencias Naturales 7°</span>
+        <div class="controls-group">
+            <button class="btn-icon" onclick="changeFontSize(1)" title="Aumentar letra">A+</button>
+            <button class="btn-icon" onclick="changeFontSize(-1)" title="Disminuir letra">A-</button>
+            <button class="btn-icon" onclick="toggleTheme()" id="themeBtn">🌙 Modo Oscuro</button>
+        </div>
+    </div>
+    
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <header>
+        <h1>Estructura de la Materia y Enlaces Químicos</h1>
+        <p>Un viaje interactivo desde la partícula atómica hasta la formación de moléculas cotidianas</p>
+        
+        <div class="banner-objective">
+            <h3>🎯 Objetivo General de Aprendizaje</h3>
+            <p>Al finalizar, el estudiante será capaz de comprender la estructura de la materia desde el átomo hasta los enlaces químicos, analizando las partículas subatómicas, la configuración electrónica y los tipos de enlace, para explicar las propiedades de las sustancias.</p>
+        </div>
+    </header>
+
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="switchTab(0)">Módulo 1: El Átomo y Subpartículas</button>
+        <button class="tab-btn" onclick="switchTab(1)">Módulo 2: Tabla Periódica y Configuración</button>
+        <button class="tab-btn" onclick="switchTab(2)">Módulo 3: Enlaces Químicos</button>
+        <button class="tab-btn" onclick="switchTab(3)">Módulo 4: RECURSOS 3D/PhET/SIMULADORES</button>
+        <button class="tab-btn" onclick="switchTab(4)">Módulo 5: Desafío y Logros</button>
+    </nav>
+
+    <main>
+        <!-- MÓDULO 1 -->
+        <section class="tab-content active">
+            <div class="card">
+                <h2>🔬 1.1 ¿De qué está hecha la materia?</h2>
+                <p>Toda la materia que nos rodea (el aire que respiramos, el agua que bebemos, tu cuaderno de estudio) está compuesta por átomos. El átomo es la unidad básica y estructural de la materia. A lo largo de la historia de la ciencia, modelos propuestos por científicos como Dalton, Thomson, Rutherford y Bohr nos han permitido entender que el átomo está constituido por tres subpartículas fundamentales.</p>
+                
+                <div style="margin: 1.5rem 0; text-align: center;">
+                    <a href="https://drive.google.com/file/d/15YgAWBEviv0J0gVWyDr7MAG8nzyEexsf/view?usp=drive_link" target="_blank" class="resource-btn">
+                        📄 Abrir PDF Teórico: Presentación Módulo 1 (Drive)
+                    </a>
+                </div>
+
+                <div class="atom-container">
+                    <svg viewBox="0 0 220 220" width="100%" height="220">
+                        <circle cx="110" cy="110" r="90" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="4 4"/>
+                        <circle cx="110" cy="110" r="55" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="4 4"/>
+                        <circle cx="110" cy="110" r="24" fill="#ef4444" opacity="0.85"/>
+                        <circle cx="103" cy="104" r="8" fill="#3b82f6"/>
+                        <circle cx="116" cy="112" r="8" fill="#ef4444"/>
+                        <circle cx="106" cy="116" r="8" fill="#3b82f6"/>
+                        <circle cx="115" cy="102" r="8" fill="#3b82f6"/>
+                    </svg>
+
+                    <div class="hotspot" style="top: 45%; left: 47%;" onclick="showHotspot('Detalle del Átomo: NÚCLEO ATÓMICO. Concentra casi el 99.9% de la masa del átomo. Contiene protones (carga positiva, p⁺) y neutrones (sin carga eléctrica, n⁰).')">1</div>
+                    <div class="hotspot" style="top: 8%; left: 47%;" onclick="showHotspot('Detalle del Átomo: CORTEZA/NUBE ELECTRÓNICA. Región exterior que rodea al núcleo donde los electrones (carga negativa, e⁻) se desplazan rápidamente en orbitales y niveles de energía.')">2</div>
+                </div>
+
+                <div class="hotspot-info" id="hotspotInfo">
+                    Haz clic en los puntos interactivos (1 para el Núcleo o 2 para la Corteza/Nube Electrónica) para ver los detalles.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>💡 Tarjetas de Repaso: Subpartículas Atómicas</h2>
+                <p>Haz clic en cada tarjeta para rotarla y repasar los datos clave de cada subpartícula:</p>
+                <div class="grid-cards">
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">Protón (p⁺)</div>
+                            <div class="flip-card-back">Carga Positiva (+1)<br>Ubicado en el núcleo.<br>Define el Número Atómico (Z) del elemento.</div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">Neutrón (n⁰)</div>
+                            <div class="flip-card-back">Carga Neutra (0)<br>Ubicado en el núcleo.<br>Aporta estabilidad y masa al núcleo (A = Z + n).</div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">Electrón (e⁻)</div>
+                            <div class="flip-card-back">Carga Negativa (-1)<br>Ubicado en la corteza/nube electrónica.<br>Interviene en las reacciones y enlaces químicos.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🖥️ Guía Rápida de Aplicaciones 3D AR (Módulo 1)</h2>
+                <p>Accede a la guía en Google Drive y escanea el código QR para descargar la aplicación de Realidad Aumentada:</p>
+                <a href="https://drive.google.com/file/d/18N-6HHoVdKKJyHh50RIETSmX0QkTZfbM/view?usp=drive_link" target="_blank" class="resource-btn">
+                    📑 Guía de Descarga: Modelos Atómicos 3D
+                </a>
+                
+                <div class="grid-cards" style="margin-top: 1rem;">
+                    <div class="qr-card">
+                        <h4>Modelos Atómicos 3D</h4>
+                        <p>Google Play Store (Android)</p>
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://play.google.com/store/apps/details?id=com.ULS.ModelosAtomicos3D%26hl=es_CO" alt="QR Modelos Atómicos 3D">
+                        <br>
+                        <a href="https://play.google.com/store/apps/details?id=com.ULS.ModelosAtomicos3D&hl=es_CO" target="_blank" style="font-size: 0.85rem; color: var(--primary);">Abrir en Google Play</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MÓDULO 2 -->
+        <section class="tab-content">
+            <div class="card">
+                <h2>📊 2.1 La Tabla Periódica y Electrones de Valencia</h2>
+                <p>La Tabla Periódica moderna ordena todos los elementos químicos conocidos según su <strong>Número Atómico (Z)</strong>, el cual representa la cantidad de protones en el núcleo. Los elementos están organizados en <em>filas horizontales (Periodos)</em> y <em>columnas verticales (Grupos o Familias)</em>.</p>
+                <p style="margin-top: 0.5rem;">Los elementos de un mismo Grupo comparten propiedades químicas similares debido a que poseen la misma cantidad de <strong>Electrones de Valencia</strong>. Los electrones de valencia son aquellos electrones ubicados en el nivel de energía más externo (última capa) del átomo, y son los únicos responsables de formar enlaces químicos entre los elementos.</p>
+                
+                <div style="margin: 1.5rem 0; text-align: center;">
+                    <a href="https://drive.google.com/file/d/1mYxIdJAnQfs1kiORBfr8uOy3aYMlEBln/view?usp=sharing" target="_blank" class="resource-btn">
+                        📄 Abrir PDF Teórico: Presentación Módulo 2 (Drive)
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>⚡ 2.2 Configuración Electrónica</h2>
+                <p>La <strong>Configuración Electrónica</strong> indica la manera en que los electrones se estructuran, comunican u organizan en un átomo de acuerdo con el modelo de capas electrónicas. Los electrones se distribuyen en niveles de energía (n = 1, 2, 3, 4, 5, 6, 7) y subniveles de energía (s, p, d, f).</p>
+                
+                <h3 style="margin-top: 1rem;">Capacidad Máxima por Subnivel:</h3>
+                <table class="moeller-table">
+                    <thead>
+                        <tr>
+                            <th>Subnivel</th>
+                            <th>Capacidad Máxima de Electrones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>s</strong></td><td>Hasta 2 electrones (s²)</td></tr>
+                        <tr><td><strong>p</strong></td><td>Hasta 6 electrones (p⁶)</td></tr>
+                        <tr><td><strong>d</strong></td><td>Hasta 10 electrones (d¹⁰)</td></tr>
+                        <tr><td><strong>f</strong></td><td>Hasta 14 electrones (f¹⁴)</td></tr>
+                    </tbody>
+                </table>
+
+                <h3 style="margin-top: 1rem;">El Diagrama de Moeller (Regla de las Diagonales)</h3>
+                <p>Para escribir la configuración electrónica de cualquier elemento de forma ordenada, se sigue el recorrido de las diagonales en el Diagrama de Moeller:</p>
+                <div style="background: var(--bg-body); border: 1px dashed var(--primary); padding: 1rem; border-radius: 8px; text-align: center; margin: 1rem 0; font-family: monospace; font-size: 1.05rem;">
+                    1s² ➔ 2s² ➔ 2p⁶ ➔ 3s² ➔ 3p⁶ ➔ 4s² ➔ 3d¹⁰ ➔ 4p⁶ ➔ 5s² ...
+                </div>
+                <p><strong>Ejemplo (Sodio, Na - Z = 11):</strong><br>
+                El Sodio tiene 11 electrones. Llenando en orden: 1s² (2 e⁻) + 2s² (2 e⁻) + 2p⁶ (6 e⁻) + 3s¹ (1 e⁻) = 11 e⁻.<br>
+                <em>Configuración final:</em> <strong>1s² 2s² 2p⁶ 3s¹</strong>. Su último nivel es n=3 y posee <strong>1 electrón de valencia</strong> (3s¹).</p>
+            </div>
+
+            <div class="card">
+                <h2>🎯 Reto Rápido: Número Atómico y Configuración</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <p><strong>Item 1:</strong> Un átomo neutro de Carbono tiene Z = 6 (6 protones). ¿Cuántos electrones orbitan a su alrededor?</p>
+                    <button class="option-btn" onclick="checkAnswer(this, false, 'q1', 'Recuerda que para que un átomo sea neutro, sus cargas positivas (protones) deben igualar exactamente sus cargas negativas (electrones).')">A) 12 electrones</button>
+                    <button class="option-btn" onclick="checkAnswer(this, true, 'q1', '¡Correcto! Al ser neutro, el número de protones (+6) es exactamente igual al número de electrones (-6).')">B) 6 electrones</button>
+                    <button class="option-btn" onclick="checkAnswer(this, false, 'q1', 'Incorrecto. 6 es el número atómico; para neutro se igualan las subpartículas.')">C) 3 electrones</button>
+                    <div class="feedback" id="q1-feedback"></div>
+                </div>
+
+                <div>
+                    <p><strong>Item 2 (Hallar Configuración Electrónica):</strong> El Oxígeno tiene número atómico Z = 8. ¿Cuál es su configuración electrónica correcta?</p>
+                    <button class="option-btn" onclick="checkAnswer(this, false, 'q2', 'Incorrecto. 1s² 2s² 2p⁶ suma 10 electrones (corresponde al Neón, Z=10).')">A) 1s² 2s² 2p⁶</button>
+                    <button class="option-btn" onclick="checkAnswer(this, true, 'q2', '¡Excelente! 1s² (2) + 2s² (2) + 2p⁴ (4) suma exactamente 8 electrones. Sus electrones de valencia en el nivel 2 son 2 + 4 = 6.')">B) 1s² 2s² 2p⁴</button>
+                    <button class="option-btn" onclick="checkAnswer(this, false, 'q2', 'Incorrecto. El subnivel s solo puede albergar máximo 2 electrones, no 4.')">C) 1s⁴ 2s⁴</button>
+                    <div class="feedback" id="q2-feedback"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📲 Guías de Descarga y Aplicaciones 3D AR (Módulo 2)</h2>
+                <p>Guías de acceso y códigos QR para las aplicaciones móviles del Módulo 2:</p>
+                <a href="https://drive.google.com/file/d/1GLMxOFAgERGs22AI0qmv9Fqj1Dkz8lVk/view?usp=drive_link" target="_blank" class="resource-btn">
+                    📑 Guía de Descarga: Atom Scope, Atomarium y Chem Verse
+                </a>
+
+                <div class="grid-cards" style="margin-top: 1rem;">
+                    <div class="qr-card">
+                        <h4>Atomarium 3D</h4>
+                        <p>Google Play (Android)</p>
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://play.google.com/store/apps/details?id=com.vasaserafin.atomarium" alt="QR Atomarium Android">
+                        <br><a href="https://play.google.com/store/apps/details?id=com.vasaserafin.atomarium" target="_blank" style="font-size: 0.85rem; color: var(--primary);">Play Store</a>
+                    </div>
+                    <div class="qr-card">
+                        <h4>Atomarium 3D</h4>
+                        <p>App Store (iOS)</p>
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://apps.apple.com/us/app/atomarium-periodic-table-3d/id6820566803" alt="QR Atomarium iOS">
+                        <br><a href="https://apps.apple.com/us/app/atomarium-periodic-table-3d/id6820566803" target="_blank" style="font-size: 0.85rem; color: var(--primary);">App Store</a>
+                    </div>
+                    <div class="qr-card">
+                        <h4>Atom Scope</h4>
+                        <p>Google Play (Android)</p>
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://play.google.com/store/apps/details?id=com.wileylab.atomscope" alt="QR Atom Scope">
+                        <br><a href="https://play.google.com/store/apps/details?id=com.wileylab.atomscope" target="_blank" style="font-size: 0.85rem; color: var(--primary);">Play Store</a>
+                    </div>
+                    <div class="qr-card">
+                        <h4>Chem Verse</h4>
+                        <p>Google Play (Android)</p>
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://play.google.com/store/apps/details?id=com.chem_verse.chem_verse%26hl=es_CO" alt="QR Chem Verse">
+                        <br><a href="https://play.google.com/store/apps/details?id=com.chem_verse.chem_verse&hl=es_CO" target="_blank" style="font-size: 0.85rem; color: var(--primary);">Play Store</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MÓDULO 3 -->
+        <section class="tab-content">
+            <div class="card">
+                <h2>🔗 3.1 Los Enlaces Químicos y la Regla del Octeto</h2>
+                <p>Los átomos rara vez se encuentran aislados en la naturaleza. Para alcanzar mayor estabilidad química, los átomos interactúan entre sí formando <strong>enlaces químicos</strong>. Esta búsqueda de estabilidad se explica mediante la <strong>Regla del Octeto</strong>, formulada por el químico Gilbert N. Lewis.</p>
+                
+                <div style="background: rgba(37, 99, 235, 0.08); border-left: 4px solid var(--primary); padding: 1rem; margin: 1rem 0; border-radius: 0 8px 8px 0;">
+                    <h3 style="margin-bottom: 0.3rem;">Regla del Octeto</h3>
+                    <p>Establece que los átomos tienden a ganar, perder o compartir electrones de valencia con el objetivo de quedar con <strong>8 electrones</strong> en su último nivel de energía, adquiriendo una configuración electrónica muy estable, idéntica a la de un gas noble (como el Neón o el Argón).</p>
+                </div>
+
+                <div style="margin: 1.5rem 0; text-align: center;">
+                    <a href="https://drive.google.com/file/d/1WRPdo-fkFt_TnPUq9LKpZPpBK9ILn4XG/view?usp=drive_link" target="_blank" class="resource-btn">
+                        📄 Abrir PDF Teórico: Presentación Módulo 3 (Drive)
+                    </a>
+                </div>
+
+                <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Tipos de Enlaces Químicos:</h3>
+                <div class="grid-cards" style="margin-top: 1rem;">
+                    <div class="card" style="border-top: 4px solid var(--primary);">
+                        <h3>Enlace Iónico</h3>
+                        <p>Se produce cuando un elemento metal (baja electronegatividad) <strong>transfiere</strong> uno o más electrones a un elemento no metal (alta electronegatividad). Se forman iones positivos (catión) y negativos (anión) que se atraen por fuerzas electrostáticas.</p>
+                        <br><small><strong>Ejemplo:</strong> Sal de cocina (NaCl).</small>
+                    </div>
+                    <div class="card" style="border-top: 4px solid var(--secondary);">
+                        <h3>Enlace Covalente</h3>
+                        <p>Ocurre entre elementos no metálicos. Al tener electronegatividades similares, ningún átomo cede electrones; en su lugar, <strong>comparten</strong> uno o más pares de electrones para completar el octeto.</p>
+                        <br><small><strong>Ejemplo:</strong> Molécula de agua (H₂O) u Oxígeno molecular (O₂).</small>
+                    </div>
+                    <div class="card" style="border-top: 4px solid var(--accent);">
+                        <h3>Enlace Metálico</h3>
+                        <p>Se genera entre átomos de elementos metálicos. Los átomos ceden sus electrones de valencia formando un núcleo de cationes inmerso en una <strong>"nube o mar de electrones libres"</strong> deslocalizados, lo que explica la alta conductividad eléctrica y térmica de los metales.</p>
+                        <br><small><strong>Ejemplo:</strong> Cobre (Cu), Hierro (Fe), Oro (Au).</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🧪 Laboratorio de Simulación Interactiva</h2>
+                
+                <!-- Simulador 1: Iónico -->
+                <div style="border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3>1. Simulación de Enlace Iónico: Cloruro de Sodio (NaCl)</h3>
+                    <p>El Sodio (Na, 1 e⁻ de valencia) le cede su electrón al Cloro (Cl, 7 e⁻ de valencia) para que ambos alcancen el octeto:</p>
+                    <div style="text-align: center; margin: 1.2rem 0;">
+                        <span id="naAtom" style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">Na •</span>
+                        <span style="margin: 0 1rem; font-size: 1.5rem;">+</span>
+                        <span id="clAtom" style="font-size: 1.5rem; font-weight: bold; color: var(--secondary);">:Cl:</span>
+                    </div>
+                    <div style="text-align: center;">
+                        <button class="btn-icon" style="background: var(--primary); color: white;" onclick="simulateIonicBond()">Simular Transferencia (Iónico)</button>
+                    </div>
+                    <p id="ionicResult" style="text-align: center; margin-top: 0.8rem; font-weight: 500;"></p>
+                </div>
+
+                <!-- Simulador 2: Covalente -->
+                <div>
+                    <h3>2. Simulación de Enlace Covalente: Agua (H₂O)</h3>
+                    <p>Un átomo de Oxígeno (O, 6 e⁻ de valencia) comparte electrones con dos átomos de Hidrógeno (H, 1 e⁻ cada uno) para completar su octeto:</p>
+                    <div style="text-align: center; margin: 1.2rem 0;">
+                        <span id="h1Atom" style="font-size: 1.4rem; font-weight: bold; color: var(--accent);">H•</span>
+                        <span style="margin: 0 0.5rem; font-size: 1.4rem;">+</span>
+                        <span id="oAtom" style="font-size: 1.4rem; font-weight: bold; color: var(--primary);">:O:</span>
+                        <span style="margin: 0 0.5rem; font-size: 1.4rem;">+</span>
+                        <span id="h2Atom" style="font-size: 1.4rem; font-weight: bold; color: var(--accent);">•H</span>
+                    </div>
+                    <div style="text-align: center;">
+                        <button class="btn-icon" style="background: var(--secondary); color: white;" onclick="simulateCovalentBond()">Simular Compartición (Covalente)</button>
+                    </div>
+                    <p id="covalentResult" style="text-align: center; margin-top: 0.8rem; font-weight: 500;"></p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📱 Guías de Descarga y Aplicaciones 3D AR (Módulo 3)</h2>
+                <p>Enlace a la guía de descarga de Unreal Chemist y sus códigos QR oficiales:</p>
+                <a href="https://drive.google.com/file/d/1kV3vWwyGSYhpjGoJfbe7skiy1d91cMp3/view?usp=drive_link" target="_blank" class="resource-btn">
+                    📑 Guía de Descarga: Unreal Chemist
+                </a>
+
+                <div class="grid-cards" style="margin-top: 1rem;">
+                    <div class="qr-card">
+                        <h4>Unreal Chemist</h4>
+                        <p>Google Play (Android)</p>
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://play.google.com/store/apps/details?id=com.PixelMiller.UnrealChemist%26hl=es_CO" alt="QR Unreal Chemist Android">
+                        <br><a href="https://play.google.com/store/apps/details?id=com.PixelMiller.UnrealChemist&hl=es_CO" target="_blank" style="font-size: 0.85rem; color: var(--primary);">Play Store</a>
+                    </div>
+                    <div class="qr-card">
+                        <h4>Unreal Chemist</h4>
+                        <p>App Store (iOS)</p>
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://apps.apple.com/co/app/unreal-chemist/id1597689215?l=en-GB%26platform=vision" alt="QR Unreal Chemist iOS">
+                        <br><a href="https://apps.apple.com/co/app/unreal-chemist/id1597689215?l=en-GB&platform=vision" target="_blank" style="font-size: 0.85rem; color: var(--primary);">App Store</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MÓDULO 4: RECURSOS 3D/PhET/SIMULADORES (NUEVO) -->
+        <section class="tab-content">
+            <div class="card">
+                <h2>🌐 Tabla Periódica Interactiva de Google</h2>
+                <p>Explora cada elemento químico en 3D, conoce sus propiedades y observa su estructura atómica interactiva desarrollada por Google Arts & Culture:</p>
+                <div style="margin-top: 1rem; text-align: center;">
+                    <a href="https://artsexperiments.withgoogle.com/periodic-table/" target="_blank" class="resource-btn">
+                        🧪 Abrir Tabla Periódica de Google 3D
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🖼️ Infografías Didácticas de Apoyo</h2>
+                <p>Accede a las infografías explicativas y resúmenes visuales guardados en Google Drive:</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1rem;">
+                    <a href="https://drive.google.com/file/d/1vhdAe3WA2SsG3RnHlxRAQNRZfKmuP2qx/view?usp=drive_link" target="_blank" class="resource-btn secondary-btn">
+                        🖼️ Infografía 1: Estructura Atómica
+                    </a>
+                    <a href="https://drive.google.com/file/d/1bUtggknXt7c9hBJvfIFcW6sskBYx4Zar/view?usp=drive_link" target="_blank" class="resource-btn secondary-btn">
+                        🖼️ Infografía 2: Configuración Electrónica
+                    </a>
+                    <a href="https://drive.google.com/file/d/12KaOC5koy5yhLyTTKlRyXeXyiQjKV8bF/view?usp=drive_link" target="_blank" class="resource-btn secondary-btn">
+                        🖼️ Infografía 3: Enlaces Químicos
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🎴 Flashcards Interactivas y Visor de Moléculas 3D</h2>
+                <p>Tarjetas de memoria para afianzar conceptos y visor de moléculas complejas:</p>
+                <div class="grid-cards">
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">¿Qué es el Número Atómico (Z)?</div>
+                            <div class="flip-card-back">Es la cantidad de protones en el núcleo del átomo. Determina la identidad química del elemento.</div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">¿Qué son Isótopos?</div>
+                            <div class="flip-card-back">Átomos del mismo elemento (igual Z) con diferente cantidad de neutrones (diferente número de masa A).</div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">Visor 3D: MolView</div>
+                            <div class="flip-card-back">
+                                <div>
+                                    <strong>MolView 3D</strong><br>
+                                    <a href="https://molview.org/" target="_blank" style="color: var(--primary); font-weight: bold;">Abrir Visor de Moléculas 3D ➔</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🧪 Simuladores Interactivos PhET y Experimentos Históricos</h2>
+                <p>Colección depurada de laboratorios virtuales y simulaciones de física y química:</p>
+
+                <div class="sim-list-item">
+                    <span class="sim-icon">⚛️</span>
+                    <div class="sim-details">
+                        <h4>Simulación: Construye un Átomo</h4>
+                        <p>Construye átomos agregando protones, neutrones y electrones. Descubre la masa, carga, isótopos e iones.</p>
+                        <a href="https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_all.html?locale=es" target="_blank" class="resource-btn">🔗 Abrir en PhET Interactive Simulations</a>
+                    </div>
+                </div>
+
+                <div class="sim-list-item">
+                    <span class="sim-icon">⚖️</span>
+                    <div class="sim-details">
+                        <h4>Simulación: Isótopos y Masa Atómica</h4>
+                        <p>Explora la abundancia isotópica en la naturaleza y calcula la masa atómica promedio de los elementos.</p>
+                        <a href="https://phet.colorado.edu/sims/html/isotopes-and-atomic-mass/latest/isotopes-and-atomic-mass_all.html?locale=es" target="_blank" class="resource-btn">🔗 Abrir en PhET Interactive Simulations</a>
+                    </div>
+                </div>
+
+                <div class="sim-list-item">
+                    <span class="sim-icon">🧪</span>
+                    <div class="sim-details">
+                        <h4>Simulación: Construye una Molécula</h4>
+                        <p>Combina átomos mediante enlaces covalentes para armar moléculas comunes como agua, amoníaco y metano.</p>
+                        <a href="https://phet.colorado.edu/sims/html/build-a-molecule/latest/build-a-molecule_all.html?locale=es" target="_blank" class="resource-btn">🔗 Abrir en PhET Interactive Simulations</a>
+                    </div>
+                </div>
+
+                <div class="sim-list-item">
+                    <span class="sim-icon">⚡</span>
+                    <div class="sim-details">
+                        <h4>Simulación: Ley de Coulomb</h4>
+                        <p>Visualiza las fuerzas de atracción y repulsión electrostática entre cargas eléctricas positivas y negativas.</p>
+                        <a href="https://phet.colorado.edu/sims/html/coulombs-law/latest/coulombs-law_all.html?locale=es" target="_blank" class="resource-btn">🔗 Abrir en PhET Interactive Simulations</a>
+                    </div>
+                </div>
+
+                <div class="sim-list-item">
+                    <span class="sim-icon">🧲</span>
+                    <div class="sim-details">
+                        <h4>Simulación: Polaridad de la Molécula</h4>
+                        <p>Analiza cómo la electronegatividad genera cargas parciales y momentos dipolares en moléculas.</p>
+                        <a href="https://phet.colorado.edu/sims/html/molecule-polarity/latest/molecule-polarity_all.html?locale=es" target="_blank" class="resource-btn">🔗 Abrir en PhET Interactive Simulations</a>
+                    </div>
+                </div>
+
+                <div class="sim-list-item">
+                    <span class="sim-icon">🎈</span>
+                    <div class="sim-details">
+                        <h4>Actividad Interactiva: Globos y Electricidad Estática</h4>
+                        <p>Observa la transferencia de cargas eléctricas al frotar un globo y cómo se induce la polarización de la carga.</p>
+                        <a href="https://phet.colorado.edu/sims/html/balloons-and-static-electricity/latest/balloons-and-static-electricity_all.html?locale=es" target="_blank" class="resource-btn">🔗 Abrir en PhET Interactive Simulations</a>
+                    </div>
+                </div>
+
+                <div class="sim-list-item">
+                    <span class="sim-icon">💡</span>
+                    <div class="sim-details">
+                        <h4>Simulación: Tubo de Rayos Catódicos (Crookes)</h4>
+                        <p>Simula el experimento histórico de J.J. Thomson con el tubo de Crookes que llevó al descubrimiento del electrón.</p>
+                        <a href="https://www.labxchange.org/" target="_blank" class="resource-btn secondary-btn">🔗 Abrir en LabXchange</a>
+                    </div>
+                </div>
+
+                <div class="sim-list-item">
+                    <span class="sim-icon">🎯</span>
+                    <div class="sim-details">
+                        <h4>Simulación: El Experimento de Rutherford</h4>
+                        <p>¿Cómo logró Rutherford descifrar la estructura del átomo sin poder verlo? Simula el famoso experimento en el que refutó el modelo del pudín de pasas al observar partículas alfa rebotar contra una lámina de oro.</p>
+                        <a href="https://phet.colorado.edu/sims/html/rutherford-scattering/latest/rutherford-scattering_all.html?locale=es" target="_blank" class="resource-btn">🔗 Abrir en PhET / LabXchange</a>
+                    </div>
+                </div>
+
+                <div class="sim-list-item">
+                    <span class="sim-icon">🔬</span>
+                    <div class="sim-details">
+                        <h4>Simulación: Descubrimiento del Neutrón (Chadwick)</h4>
+                        <p>Simula el experimento histórico de James Chadwick que demostró la existencia de partículas neutras en el núcleo atómico.</p>
+                        <a href="https://classadapt.com/" target="_blank" class="resource-btn secondary-btn">🔗 Abrir en ClassAdapt</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MÓDULO 5 -->
+        <section class="tab-content">
+            <div class="card">
+                <h2>🏆 Cuestionario de Evaluación Integradora (5 Preguntas)</h2>
+                <p>Responde las 5 preguntas del cuestionario para evaluar tu aprendizaje y desbloquear las 5 insignias científicas:</p>
+                
+                <!-- Pregunta 1 -->
+                <div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px dashed var(--border);">
+                    <p><strong>1. ¿Qué subpartícula atómica posee carga eléctrica negativa y se ubica girando en la corteza o nube electrónica?</strong></p>
+                    <button class="option-btn" onclick="checkAnswer(this, false, 'e1', 'El protón se ubica en el núcleo y tiene carga positiva.')">A) Protón</button>
+                    <button class="option-btn" onclick="checkAnswer(this, false, 'e1', 'El neutrón se ubica en el núcleo y no posee carga eléctrica.')">B) Neutrón</button>
+                    <button class="option-btn" onclick="checkAnswer(this, true, 'e1', '¡Excelente! Los electrones orbitan en la nube electrónica y poseen carga negativa (e⁻).')">C) Electrón</button>
+                    <div class="feedback" id="e1-feedback"></div>
+                </div>
+
+                <!-- Pregunta 2 -->
+                <div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px dashed var(--border);">
+                    <p><strong>2. ¿Qué establece la Regla del Octeto respecto a la estabilidad de los átomos?</strong></p>
+                    <button class="option-btn" onclick="checkAnswer(this, false, 'e2', 'Incorrecto. 2 electrones aplica solo para la capa K del Hidrógeno o Helio.')">A) Tener 2 electrones en el núcleo.</button>
+                    <button class="option-btn" onclick="checkAnswer(this, true, 'e2', '¡Correcto! Los átomos tienden a ganar, perder o compartir electrones hasta completar 8 electrones de valencia en su último nivel.')">B) Completar 8 electrones de valencia en su nivel más externo.</button>
+                    <button class="option-btn" onclick="checkAnswer(this, false, 'e2', 'Incorrecto. Tienen que ser 8 electrones de valencia en la capa externa.')">C) Tener 8 protones exactamente en el núcleo.</button>
+                    <div class="feedback" id="e2-feedback"></div>
+                </div>
+
+                <!-- Pregunta 3 -->
+                <div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px dashed var(--border);">
+                    <p><strong>3. Cuando dos átomos no metálicos se unen compartiendo pares de electrones, se forma un enlace:</strong></p>
+                    <button class="option-btn" onclick="checkAnswer(this, true, 'e3', '¡Muy bien! En el enlace covalente los átomos no metálicos comparten electrones para completar su octeto.')">A) Covalente</button>
+                    <button class="option-btn" onclick="checkAnswer(this, false, 'e3', 'En el enlace iónico hay transferencia completa de un metal a un no metal.')">B) Iónico</button>
+                    <button class="option-btn" onclick="checkAnswer(this, false, 'e3', 'El enlace metálico ocurre exclusivamente entre átomos de elementos metálicos.')">C) Metálico</button>
+                    <div class="feedback" id="e3-feedback"></div>
+                </div>
+
+                <!-- Pregunta 4 -->
+                <div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px dashed var(--border);">
+                    <p><strong>4. ¿En qué consiste el principio del Enlace Metálico y por qué conduce electricidad?</strong></p>
+                    <button class="option-btn" onclick="checkAnswer(this, false, 'e4', 'Incorrecto. En el enlace metálico no hay atracción iónica por transferencia fija.')">A) Se transfieren electrones formando cristales iónicos rígidos.</button>
+                    <button class="option-btn" onclick="checkAnswer(this, true, 'e4', '¡Perfecto! Los electrones de valencia forman una nube o mar de electrones libres deslocalizados que fluyen fácilmente.')">B) Los electrones forman una "nube o mar libre" deslocalizada alrededor de los cationes.</button>
+                    <button class="option-btn" onclick="checkAnswer(this, false, 'e4', 'Incorrecto. Esos son enlaces covalentes en moléculas aisladas.')">C) Se comparten pares de electrones entre dos átomos individuales.</button>
+                    <div class="feedback" id="e4-feedback"></div>
+                </div>
+
+                <!-- Pregunta 5 -->
+                <div>
+                    <p><strong>5. Siguiendo la regla de las diagonales (Diagrama de Moeller), ¿cuál es la configuración electrónica de un átomo con Z = 11 (Sodio)?</strong></p>
+                    <button class="option-btn" onclick="checkAnswer(this, false, 'e5', 'Incorrecto. 1s² 2s² 2p⁶ suma 10 electrones (Neón).')">A) 1s² 2s² 2p⁶</button>
+                    <button class="option-btn" onclick="checkAnswer(this, true, 'e5', '¡Brillante! 1s² (2) + 2s² (2) + 2p⁶ (6) + 3s¹ (1) = 11 electrones. Su electrón de valencia es 3s¹.')">B) 1s² 2s² 2p⁶ 3s¹</button>
+                    <button class="option-btn" onclick="checkAnswer(this, false, 'e5', 'Incorrecto. El subnivel p puede tener máximo 6 electrones.')">C) 1s² 2s² 2p⁷</button>
+                    <div class="feedback" id="e5-feedback"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🎖️ Mis 5 Reconocimientos y Logros</h2>
+                <p>A medida que respondas correctamente las preguntas y realices las simulaciones, desbloquearás tus 5 insignias:</p>
+                <div class="badge-container">
+                    <div class="badge" id="badge1">
+                        <span class="badge-icon">⚛️</span>
+                        <strong>1. Explorador Atómico</strong>
+                    </div>
+                    <div class="badge" id="badge2">
+                        <span class="badge-icon">⚡</span>
+                        <strong>2. Especialista en Octeto</strong>
+                    </div>
+                    <div class="badge" id="badge3">
+                        <span class="badge-icon">🧪</span>
+                        <strong>3. Maestro de Enlaces</strong>
+                    </div>
+                    <div class="badge" id="badge4">
+                        <span class="badge-icon">🔗</span>
+                        <strong>4. Experto Metálico</strong>
+                    </div>
+                    <div class="badge" id="badge5">
+                        <span class="badge-icon">📐</span>
+                        <strong>5. Genio de Configuración</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let score = 0;
+        let currentTab = 0;
+
+        function switchTab(index) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+
+            tabs[index].classList.add('active');
+            contents[index].classList.add('active');
+            currentTab = index;
+
+            const progress = ((index + 1) / tabs.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        let currentFontSize = 16;
+        function changeFontSize(delta) {
+            currentFontSize = Math.min(Math.max(14, currentFontSize + delta), 22);
+            document.documentElement.style.setProperty('--font-size', currentFontSize + 'px');
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeBtn = document.getElementById('themeBtn');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeBtn.textContent = '🌙 Modo Oscuro';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeBtn.textContent = '☀️ Modo Claro';
+            }
+        }
+
+        function showHotspot(text) {
+            const infoBox = document.getElementById('hotspotInfo');
+            infoBox.style.display = 'block';
+            infoBox.innerHTML = '<strong>Información:</strong> ' + text;
+        }
+
+        function checkAnswer(button, isCorrect, feedbackId, explanation) {
+            const feedbackEl = document.getElementById(feedbackId + '-feedback');
+            const parent = button.parentElement;
+            const buttons = parent.querySelectorAll('.option-btn');
+            
+            buttons.forEach(btn => btn.style.pointerEvents = 'none');
+
+            feedbackEl.style.display = 'block';
+            if (isCorrect) {
+                feedbackEl.className = 'feedback correct';
+                feedbackEl.innerHTML = '✓ ' + explanation;
+                
+                if (feedbackId === 'e1') document.getElementById('badge1').classList.add('unlocked');
+                if (feedbackId === 'e2') document.getElementById('badge2').classList.add('unlocked');
+                if (feedbackId === 'e3') document.getElementById('badge3').classList.add('unlocked');
+                if (feedbackId === 'e4') document.getElementById('badge4').classList.add('unlocked');
+                if (feedbackId === 'e5') document.getElementById('badge5').classList.add('unlocked');
+            } else {
+                feedbackEl.className = 'feedback incorrect';
+                feedbackEl.innerHTML = '✗ ' + explanation;
+            }
+        }
+
+        function simulateIonicBond() {
+            const na = document.getElementById('naAtom');
+            const cl = document.getElementById('clAtom');
+            const result = document.getElementById('ionicResult');
+
+            na.innerHTML = 'Na⁺';
+            cl.innerHTML = '[:Cl:]⁻';
+            result.innerHTML = '¡Enlace Iónico Formado! El Sodio cedió 1 electrón al Cloro, formando los iones Na⁺ y Cl⁻ que se atraen para formar la sal de cocina (NaCl).';
+            result.style.color = 'var(--secondary)';
+            
+            document.getElementById('badge3').classList.add('unlocked');
+        }
+
+        function simulateCovalentBond() {
+            const h1 = document.getElementById('h1Atom');
+            const o = document.getElementById('oAtom');
+            const h2 = document.getElementById('h2Atom');
+            const result = document.getElementById('covalentResult');
+
+            h1.innerHTML = 'H';
+            o.innerHTML = '• • O • •';
+            h2.innerHTML = 'H';
+            result.innerHTML = '¡Enlace Covalente Formado! El Oxígeno comparte 1 par de electrones con cada Hidrógeno, formando la molécula de agua (H₂O) y completando 8 electrones en su último nivel.';
+            result.style.color = 'var(--primary)';
+
+            document.getElementById('badge2').classList.add('unlocked');
+        }
+    </script>
+</body>
+</html>
